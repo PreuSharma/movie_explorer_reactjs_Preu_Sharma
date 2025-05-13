@@ -1,5 +1,8 @@
-import React, { Component } from 'react';
-import bgImg from '../assets/bg.jpg'; 
+import React, { Component } from "react";
+import { signUpUser } from "../services/userServices";
+import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
+import { withNavigation } from "../utils/withNavigation";
 
 interface SignupState {
   fullName: string;
@@ -7,29 +10,36 @@ interface SignupState {
   password: string;
   confirmPassword: string;
   mobile_number: string;
-  role: string;
   isAgreed: boolean;
   error: string;
 }
 
-class Signup extends Component<{}, SignupState> {
-  constructor(props: {}) {
+interface SignupProps {
+  navigate: (path: string) => void;
+}
+
+class Signup extends Component<SignupProps, SignupState> {
+  constructor(props: SignupProps) {
     super(props);
     this.state = {
-      fullName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      mobile_number: '',
-      role: 'user',
+      fullName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      mobile_number: "",
       isAgreed: false,
-      error: '',
+      error: "",
     };
   }
 
-  handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    this.setState({ [name]: value } as Pick<SignupState, keyof SignupState>);
+    this.setState((prevState) => ({
+  ...prevState,
+  [name]: name === "isAgreed" ? (e.target as HTMLInputElement).checked : value,
+}));
   };
 
   handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,198 +54,188 @@ class Signup extends Component<{}, SignupState> {
       password,
       confirmPassword,
       mobile_number,
-      role,
       isAgreed,
     } = this.state;
-  
+
     const nameRegex = /^[A-Za-z\s]{2,}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const mobileRegex = /^[0-9]{10}$/;
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
-  
+    const mobileRegex = /^\d{10}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
+
     if (!nameRegex.test(fullName)) {
-      this.setState({ error: 'Full Name must contain only letters and be at least 2 characters.' });
-      return;
-    }
-  
-    if (!emailRegex.test(email)) {
-      this.setState({ error: 'Invalid email format.' });
-      return;
-    }
-  
-    if (!mobileRegex.test(mobile_number)) {
-      this.setState({ error: 'Mobile number must be exactly 10 digits.' });
-      return;
-    }
-  
-    if (!passwordRegex.test(password)) {
       this.setState({
         error:
-          'Password must be at least 6 characters and include uppercase, lowercase, number, and special character.',
+          "Full Name must contain only letters and be at least 2 characters.",
       });
       return;
     }
-  
+    if (!emailRegex.test(email)) {
+      this.setState({ error: "Invalid email format." });
+      return;
+    }
+    if (!mobileRegex.test(mobile_number)) {
+      this.setState({ error: "Mobile number must be exactly 10 digits." });
+      return;
+    }
+    if (!passwordRegex.test(password)) {
+      this.setState({
+        error:
+          "Password must be at least 6 characters and include uppercase, lowercase, number, and special character.",
+      });
+      return;
+    }
     if (password !== confirmPassword) {
-      this.setState({ error: 'Passwords do not match.' });
+      this.setState({ error: "Passwords do not match." });
       return;
     }
-  
     if (!isAgreed) {
-      this.setState({ error: 'You must agree to the Terms and Conditions.' });
+      this.setState({ error: "You must agree to the Terms and Conditions." });
       return;
     }
-  
+
     const user = {
       name: fullName,
       email,
       password,
       mobile_number,
-      role,
     };
-  
+
     try {
-      const response = await fetch('/api/v1/auth/sign_up', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user }),
+      const data = await signUpUser(user);
+      localStorage.setItem("token", data.token);
+      toast.success("Account created successfully!");
+      this.props.navigate("/login");
+    } catch (error: any) {
+      toast.error("Signup failed. Please try again.");
+      this.setState({
+        error: error.message ?? "Something went wrong. Please try again.",
       });
-  
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('token', data.token);  
-        window.location.href = '/dashboard';  
-      } else {
-        const data = await response.json();
-        this.setState({ error: data.message || 'Signup failed. Please try again.' });
-      }
-    } catch (error) {
-      this.setState({ error: 'Something went wrong. Please try again.' });
     }
   };
-  
 
   render() {
     const {
-      fullName, email, password, confirmPassword,
-      mobile_number, role, isAgreed, error
+      fullName,
+      email,
+      password,
+      confirmPassword,
+      mobile_number,
+      isAgreed,
+      error,
     } = this.state;
 
     return (
-      <div
-        className="min-h-screen flex items-center justify-center bg-cover bg-center"
-        style={{ backgroundImage: `url(${bgImg})` }}
-      >
-        <form
-          onSubmit={this.handleSubmit}
-          className="bg-black bg-opacity-80 p-8 rounded-lg shadow-lg w-96"
-        >
-          <h2 className="text-white text-2xl font-semibold text-center mb-6">Create Account</h2>
+      <div className="min-h-screen flex items-center justify-center bg-cover bg-center relative px-4">
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: `url(${"https://images.adsttc.com/media/images/5808/23a4/e58e/ce68/aa00/0240/large_jpg/pexels-photo-27008.jpg?1476928392"})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(8px)",
+          }}
+        ></div>
 
-          {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
-
-          {/* Full Name */}
-          <input
-            type="text"
-            name="fullName"
-            value={fullName}
-            onChange={this.handleInputChange}
-            placeholder="Full Name"
-            required
-            className="w-full p-2 mb-3 rounded bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-400"
-          />
-
-          {/* Email */}
-          <input
-            type="email"
-            name="email"
-            value={email}
-            onChange={this.handleInputChange}
-            placeholder="Email"
-            required
-            className="w-full p-2 mb-3 rounded bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-400"
-          />
-
-          {/* Mobile Number */}
-          <input
-            type="text"
-            name="mobile_number"
-            value={mobile_number}
-            onChange={this.handleInputChange}
-            placeholder="Mobile Number"
-            required
-            className="w-full p-2 mb-3 rounded bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-400"
-          />
-
-          {/* Password */}
-          <input
-            type="password"
-            name="password"
-            value={password}
-            onChange={this.handleInputChange}
-            placeholder="Password"
-            required
-            className="w-full p-2 mb-3 rounded bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-400"
-          />
-
-          {/* Confirm Password */}
-          <input
-            type="password"
-            name="confirmPassword"
-            value={confirmPassword}
-            onChange={this.handleInputChange}
-            placeholder="Confirm Password"
-            required
-            className="w-full p-2 mb-3 rounded bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-400"
-          />
-
-          {/* Role Dropdown */}
-          <select
-            name="role"
-            value={role}
-            onChange={this.handleInputChange}
-            className="w-full p-2 mb-3 rounded bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-400"
+        <div className="z-10 w-96 max-w-md">
+          <form
+            onSubmit={this.handleSubmit}
+            className="bg-black bg-opacity-80 p-8 rounded-lg shadow-md w-full transform transition duration-400 hover:scale-[1.02] hover:shadow-lg"
           >
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
+            <h2 className="text-red-600 text-2xl font-semibold text-center mb-6">
+              Movie Explorer +
+            </h2>
+            <h2 className="text-white text-2xl font-semibold text-center mb-6">
+              Create Account
+            </h2>
 
-          {/* Terms & Conditions */}
-          <label className="text-gray-300 text-sm flex items-center mb-4">
+            {error && (
+              <p className="text-red-500 text-sm text-center mb-4">{error}</p>
+            )}
+
             <input
-              type="checkbox"
-              checked={isAgreed}
-              onChange={this.handleCheckboxChange}
-              className="mr-2"
+              type="text"
+              name="fullName"
+              value={fullName}
+              onChange={this.handleInputChange}
+              placeholder="Full Name"
+              required
+              className="w-full p-2 mb-3 rounded bg-white focus:outline-none focus:ring-2 focus:ring-red-400"
             />
-            I agree to the Terms and Conditions
-          </label>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded transition duration-200"
-          >
-            Create Account
-          </button>
+            <input
+              type="email"
+              name="email"
+              value={email}
+              onChange={this.handleInputChange}
+              placeholder="Email"
+              required
+              className="w-full p-2 mb-3 rounded bg-white focus:outline-none focus:ring-2 focus:ring-red-400"
+            />
 
-          {/* OR Divider */}
-          <div className="flex items-center justify-center my-4">
-            <hr className="w-1/4 border-gray-500" />
-            <span className="text-gray-400 mx-2">or</span>
-            <hr className="w-1/4 border-gray-500" />
-          </div>
+            <input
+              type="text"
+              name="mobile_number"
+              value={mobile_number}
+              onChange={this.handleInputChange}
+              placeholder="Mobile Number"
+              required
+              className="w-full p-2 mb-3 rounded bg-white focus:outline-none focus:ring-2 focus:ring-red-400"
+            />
 
-          {/* Login Redirect */}
-          <p className="text-center text-gray-400 mt-4 text-sm">
-            Already have an account?{' '}
-            <a href="/login" className="text-red-400 hover:underline">Sign in now</a>
-          </p>
-        </form>
+            <input
+              type="password"
+              name="password"
+              value={password}
+              onChange={this.handleInputChange}
+              placeholder="Password"
+              required
+              className="w-full p-2 mb-3 rounded bg-white focus:outline-none focus:ring-2 focus:ring-red-400"
+            />
+
+            <input
+              type="password"
+              name="confirmPassword"
+              value={confirmPassword}
+              onChange={this.handleInputChange}
+              placeholder="Confirm Password"
+              required
+              className="w-full p-2 mb-3 rounded bg-white focus:outline-none focus:ring-2 focus:ring-red-400"
+            />
+
+            <label className="text-gray-300 text-sm flex items-center mb-4 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={isAgreed}
+                onChange={this.handleCheckboxChange}
+                className="mr-2 cursor-pointer" 
+                />
+              I agree to the Terms and Conditions
+            </label>
+
+            <button
+              type="submit"
+              className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded transition duration-200 cursor-pointer"
+            >
+              Create Account
+            </button>
+
+            <div className="flex items-center justify-center my-4">
+              <hr className="w-1/4 border-gray-500" />
+              <span className="text-gray-400 mx-2">or</span>
+              <hr className="w-1/4 border-gray-500" />
+            </div>
+
+            <p className="text-center text-gray-400 mt-4 text-sm">
+              Already have an account?{" "}
+              <Link to="/login" className="text-red-400 hover:underline">
+                Sign in now
+              </Link>
+            </p>
+          </form>
+        </div>
       </div>
     );
   }
 }
 
-export default Signup;
+export default withNavigation(Signup);

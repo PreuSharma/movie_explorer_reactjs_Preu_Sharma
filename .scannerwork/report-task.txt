@@ -1,0 +1,6 @@
+projectKey=movie-explorer
+serverUrl=http://localhost:9000
+serverVersion=25.3.0.104237
+dashboardUrl=http://localhost:9000/dashboard?id=movie-explorer
+ceTaskId=558b3489-2b45-4546-bc46-e16545b6493c
+ceTaskUrl=http://localhost:9000/api/ce/task?id=558b3489-2b45-4546-bc46-e16545b6493c

@@ -1,61 +1,97 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
+import { motion } from "framer-motion";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import FeaturedBanner from "../components/FeaturedBanner";
+import MovieListingPage from "../components/MovieListing";
+import Subscription from "../components/Subscription";
 
 interface DashboardState {
   userName: string;
   userEmail: string;
   userRole: string;
+  search: string;
+  genre: string;
 }
 
 class Dashboard extends Component<{}, DashboardState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      userName: '',
-      userEmail: '',
-      userRole: '',
+      userName: "",
+      userEmail: "",
+      userRole: "guest",
+      search: "",
+      genre: "",
     };
   }
 
-  componentDidMount() {
-    // Fetch the user data from localStorage
-    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  setSearch = (search: string) => {
+    this.setState({ search });
+  };
 
-    if (userData) {
-      this.setState({
-        userName: userData.name || 'User',
-        userEmail: userData.email || 'user@example.com',
-        userRole: userData.role || 'user',
-      });
-    }
-  }
-
-  handleLogout = () => {
-    // Clear user data on logout
-    localStorage.removeItem('userData');
-    localStorage.removeItem('token');
-    window.location.href = '/login';
+  setGenre = (genre: string) => {
+    this.setState({ genre });
   };
 
   render() {
-    const { userName, userEmail, userRole } = this.state;
+    const { search, genre } = this.state;
 
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-        <div className="w-full max-w-md p-6 bg-white shadow-lg rounded-lg">
-          <h2 className="text-2xl font-semibold text-center mb-6">Dashboard</h2>
-          <div className="mb-4">
-            <h3 className="text-lg font-medium">Welcome, {userName}!</h3>
-            <p className="text-sm text-gray-600">Email: {userEmail}</p>
-            <p className="text-sm text-gray-600">Role: {userRole}</p>
-          </div>
+      <div className="bg-black">
+        {/* Header Animation: Parallax scroll effect */}
+        <motion.div
+          initial={{ opacity: 0, y: -100 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <Header search={search} setSearch={this.setSearch} />
+        </motion.div>
 
-          <button
-            onClick={this.handleLogout}
-            className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded mt-4"
-          >
-            Logout
-          </button>
-        </div>
+        {/* Featured Banner with Zoom-In */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+        >
+          <FeaturedBanner />
+        </motion.div>
+
+        {/* Movie Listings with Bounce Effect */}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            type: "spring",
+            stiffness: 100,
+            damping: 20,
+            delay: 0.5,
+          }}
+        >
+          <MovieListingPage
+            search={search}
+            genre={genre}
+            setGenre={this.setGenre}
+          />
+        </motion.div>
+
+        {/* Pricing Page with Fluid Left-to-Right Slide */}
+        <motion.div
+          initial={{ opacity: 0, x: -100 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.7 }}
+        >
+          <Subscription />
+        </motion.div>
+
+        {/* Footer with Scale-Up Effect */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 1 }}
+        >
+          <Footer />
+        </motion.div>
       </div>
     );
   }
