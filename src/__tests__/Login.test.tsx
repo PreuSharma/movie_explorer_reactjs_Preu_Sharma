@@ -1,21 +1,18 @@
-import '@testing-library/jest-dom';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import Login from "../pages/Login"; 
-import { MemoryRouter } from 'react-router-dom';
-import { loginUser } from '../services/userServices';
-import toast from 'react-hot-toast'; 
+import "@testing-library/jest-dom";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import Login from "../pages/Login";
+import { MemoryRouter } from "react-router-dom";
+import { loginUser } from "../services/userServices";
+import toast from "react-hot-toast";
 
-
-jest.mock('react-hot-toast', () => ({
+jest.mock("react-hot-toast", () => ({
   success: jest.fn(),
   error: jest.fn(),
 }));
 
-
-jest.mock('../services/userServices', () => ({
+jest.mock("../services/userServices", () => ({
   loginUser: jest.fn(),
 }));
-
 
 const localStorageMock = (() => {
   let store: Record<string, string> = {};
@@ -32,7 +29,7 @@ const localStorageMock = (() => {
     },
   };
 })();
-Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+Object.defineProperty(window, "localStorage", { value: localStorageMock });
 
 const mockNavigate = jest.fn();
 const WrappedLogin = () => <Login navigate={mockNavigate} />;
@@ -42,8 +39,8 @@ afterEach(() => {
   localStorage.clear();
 });
 
-describe('Login Component', () => {
-  test('renders login headings and inputs', () => {
+describe("Login Component", () => {
+  test("renders login headings and inputs", () => {
     render(
       <MemoryRouter>
         <WrappedLogin />
@@ -53,37 +50,34 @@ describe('Login Component', () => {
     expect(screen.getByText(/Movie Explorer \+/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/Email/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/Password/i)).toBeInTheDocument();
-    screen.getByRole('button', { name: /Sign in/i });
-    
-
+    screen.getByRole("button", { name: /Sign in/i });
   });
 
-  test('updates input values correctly', () => {
+  test("updates input values correctly", () => {
     render(
       <MemoryRouter>
         <WrappedLogin />
       </MemoryRouter>
     );
 
-    const emailInput = screen.getByPlaceholderText('Email');
-    const passwordInput = screen.getByPlaceholderText('Password');
+    const emailInput = screen.getByPlaceholderText("Email");
+    const passwordInput = screen.getByPlaceholderText("Password");
 
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    fireEvent.change(passwordInput, { target: { value: '123456' } });
+    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+    fireEvent.change(passwordInput, { target: { value: "123456" } });
 
-    expect((emailInput as HTMLInputElement).value).toBe('test@example.com');
-    expect((passwordInput as HTMLInputElement).value).toBe('123456');
+    expect((emailInput as HTMLInputElement).value).toBe("test@example.com");
+    expect((passwordInput as HTMLInputElement).value).toBe("123456");
   });
 
-
-  test('handles successful login', async () => {
+  test("handles successful login", async () => {
     (loginUser as jest.Mock).mockResolvedValue({
       status: 200,
       data: {
-        token: 'test-token',
-        name: 'Test User',
-        email: 'test@example.com',
-        role: 'user',
+        token: "test-token",
+        name: "Test User",
+        email: "test@example.com",
+        role: "user",
       },
     });
 
@@ -93,23 +87,23 @@ describe('Login Component', () => {
       </MemoryRouter>
     );
 
-    fireEvent.change(screen.getByPlaceholderText('Email'), {
-      target: { value: 'test@example.com' },
+    fireEvent.change(screen.getByPlaceholderText("Email"), {
+      target: { value: "test@example.com" },
     });
-    fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: '123456' },
+    fireEvent.change(screen.getByPlaceholderText("Password"), {
+      target: { value: "123456" },
     });
-    fireEvent.click(screen.getByRole('button', { name: /Sign In/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Sign In/i }));
 
     await waitFor(() => {
       expect(loginUser).toHaveBeenCalledTimes(1);
-      expect(localStorage.getItem('token')).toBe('test-token');
-      expect(toast.success).toHaveBeenCalledWith('Login successful!');
+      expect(localStorage.getItem("token")).toBe("test-token");
+      expect(toast.success).toHaveBeenCalledWith("Login successful!");
     });
   });
 
-  test('handles login error gracefully', async () => {
-    (loginUser as jest.Mock).mockRejectedValue(new Error('Network Error'));
+  test("handles login error gracefully", async () => {
+    (loginUser as jest.Mock).mockRejectedValue(new Error("Network Error"));
 
     render(
       <MemoryRouter>
@@ -117,13 +111,13 @@ describe('Login Component', () => {
       </MemoryRouter>
     );
 
-    fireEvent.change(screen.getByPlaceholderText('Email'), {
-      target: { value: 'fail@example.com' },
+    fireEvent.change(screen.getByPlaceholderText("Email"), {
+      target: { value: "fail@example.com" },
     });
-    fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: 'wrongpass' },
+    fireEvent.change(screen.getByPlaceholderText("Password"), {
+      target: { value: "wrongpass" },
     });
-    fireEvent.click(screen.getByRole('button', { name: 'Sign In' }));
+    fireEvent.click(screen.getByRole("button", { name: "Sign In" }));
 
     await waitFor(() => {
       expect(loginUser).toHaveBeenCalledTimes(1);
@@ -140,95 +134,89 @@ describe('Login Component', () => {
     fireEvent.click(screen.getByText(/Sign up now/i));
   });
 
+  test("shows error if email and password are empty", async () => {
+    render(
+      <MemoryRouter>
+        <WrappedLogin />
+      </MemoryRouter>
+    );
 
+    fireEvent.click(screen.getByRole("button", { name: /Sign In/i }));
 
-  test('shows error if email and password are empty', async () => {
-  render(
-    <MemoryRouter>
-      <WrappedLogin />
-    </MemoryRouter>
-  );
-
-  fireEvent.click(screen.getByRole('button', { name: /Sign In/i }));
-
-  await waitFor(() => {
-    expect(toast.error).toHaveBeenCalledWith('Email and password are required.');
-  });
-});
-
-
-test('shows error for invalid email format', async () => {
-  render(
-    <MemoryRouter>
-      <WrappedLogin />
-    </MemoryRouter>
-  );
-
-  fireEvent.change(screen.getByPlaceholderText('Email'), {
-    target: { value: 'invalidemail' },
-  });
-  fireEvent.change(screen.getByPlaceholderText('Password'), {
-    target: { value: '123456' },
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(
+        "Email and password are required."
+      );
+    });
   });
 
-  fireEvent.click(screen.getByRole('button', { name: /Sign In/i }));
+  test("shows error for invalid email format", async () => {
+    render(
+      <MemoryRouter>
+        <WrappedLogin />
+      </MemoryRouter>
+    );
 
-  await waitFor(() => {
-    expect(toast.error).toHaveBeenCalledWith('Please enter a valid email.');
-  });
-});
+    fireEvent.change(screen.getByPlaceholderText("Email"), {
+      target: { value: "invalidemail" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Password"), {
+      target: { value: "123456" },
+    });
 
+    fireEvent.click(screen.getByRole("button", { name: /Sign In/i }));
 
-
-test('shows error if password is less than 6 characters', async () => {
-  render(
-    <MemoryRouter>
-      <WrappedLogin />
-    </MemoryRouter>
-  );
-
-  fireEvent.change(screen.getByPlaceholderText('Email'), {
-    target: { value: 'test@example.com' },
-  });
-  fireEvent.change(screen.getByPlaceholderText('Password'), {
-    target: { value: '123' },
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith("Please enter a valid email.");
+    });
   });
 
-  fireEvent.click(screen.getByRole('button', { name: /Sign In/i }));
+  test("shows error if password is less than 6 characters", async () => {
+    render(
+      <MemoryRouter>
+        <WrappedLogin />
+      </MemoryRouter>
+    );
 
-  await waitFor(() => {
-    expect(toast.error).toHaveBeenCalledWith('Password must be at least 6 characters.');
-  });
-});
+    fireEvent.change(screen.getByPlaceholderText("Email"), {
+      target: { value: "test@example.com" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Password"), {
+      target: { value: "123" },
+    });
 
+    fireEvent.click(screen.getByRole("button", { name: /Sign In/i }));
 
-
-
-test('displays API error message when login fails', async () => {
-  (loginUser as jest.Mock).mockResolvedValue({
-    status: 401,
-    data: { message: 'Invalid credentials' },
-  });
-
-  render(
-    <MemoryRouter>
-      <WrappedLogin />
-    </MemoryRouter>
-  );
-
-  fireEvent.change(screen.getByPlaceholderText('Email'), {
-    target: { value: 'wrong@example.com' },
-  });
-  fireEvent.change(screen.getByPlaceholderText('Password'), {
-    target: { value: 'wrongpass' },
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(
+        "Password must be at least 6 characters."
+      );
+    });
   });
 
-  fireEvent.click(screen.getByRole('button', { name: /Sign In/i }));
+  test("displays API error message when login fails", async () => {
+    (loginUser as jest.Mock).mockResolvedValue({
+      status: 401,
+      data: { message: "Invalid credentials" },
+    });
 
-  await waitFor(() => {
-    expect(loginUser).toHaveBeenCalled();
+    render(
+      <MemoryRouter>
+        <WrappedLogin />
+      </MemoryRouter>
+    );
+
+    fireEvent.change(screen.getByPlaceholderText("Email"), {
+      target: { value: "wrong@example.com" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Password"), {
+      target: { value: "wrongpass" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Sign In/i }));
+
+    await waitFor(() => {
+      expect(loginUser).toHaveBeenCalled();
+    });
   });
-});
-
-
 });

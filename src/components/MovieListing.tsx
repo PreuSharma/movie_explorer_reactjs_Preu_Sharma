@@ -16,7 +16,6 @@ interface Movie {
   duration: number;
   description: string;
   premium: boolean;
-
   poster_url: string;
   banner_url: string;
 }

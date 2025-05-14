@@ -3,7 +3,6 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import AllMovies from "../pages/AllMovies";
 
-// ✅ Mock components used inside AllMovies
 jest.mock("../components/Header", () => (props: any) => (
   <div data-testid="header">Header - search: {props.search}</div>
 ));
@@ -20,17 +19,14 @@ describe("AllMovies Page", () => {
   it("renders Header, MovieListingPage, and Footer", () => {
     render(<AllMovies />);
 
-    // Check for Header
     const header = screen.getByTestId("header");
     expect(header).toBeInTheDocument();
-    expect(header).toHaveTextContent("search:"); // search prop should be passed
+    expect(header).toHaveTextContent("search:");
 
-    // Check for MovieListingPage
     const listing = screen.getByTestId("movie-listing");
     expect(listing).toBeInTheDocument();
     expect(listing).toHaveTextContent("genre:");
 
-    // Check for Footer
     const footer = screen.getByTestId("footer");
     expect(footer).toBeInTheDocument();
   });

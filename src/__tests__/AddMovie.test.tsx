@@ -1,12 +1,14 @@
-// __tests__/AddMovie.test.tsx
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { addMovie, getMoviesById, updateMovie } from "../services/MovieServices";
+import {
+  addMovie,
+  getMoviesById,
+  updateMovie,
+} from "../services/MovieServices";
 import AddMovie from "../pages/AddMovie";
 import toast from "react-hot-toast";
 import "@testing-library/jest-dom";
 
-// Mock dependencies
 jest.mock("react-router-dom", () => ({
   useLocation: jest.fn(),
   useNavigate: jest.fn(),
@@ -22,7 +24,6 @@ const mockedUpdateMovie = updateMovie as jest.Mock;
 const mockedToastSuccess = toast.success as jest.Mock;
 const mockedToastError = toast.error as jest.Mock;
 
-// Mock Header and Footer components
 jest.mock("../components/Header", () => () => <div>Header</div>);
 jest.mock("../components/Footer", () => () => <div>Footer</div>);
 
@@ -33,7 +34,6 @@ describe("AddMovie Component", () => {
     mockedUseLocation.mockReturnValue({ state: {} });
   });
 
-  // Test Case 1: Renders Add Movie form correctly
   test("renders Add Movie form when not in edit mode", () => {
     render(<AddMovie />);
     expect(screen.getByText("🎬 Add Movie")).toBeInTheDocument();
@@ -50,7 +50,6 @@ describe("AddMovie Component", () => {
     expect(screen.getByText("Add Movie")).toBeInTheDocument();
   });
 
-  // Test Case 2: Renders Edit Movie form when in edit mode
   test("renders Edit Movie form when in edit mode", async () => {
     const mockMovie = {
       id: 1,
@@ -78,14 +77,21 @@ describe("AddMovie Component", () => {
       expect(screen.getByPlaceholderText("DURATION")).toHaveValue("120");
       expect(screen.getByPlaceholderText("RATING")).toHaveValue("8.5");
       expect(screen.getByPlaceholderText("DIRECTOR")).toHaveValue("John Doe");
-      expect(screen.getByPlaceholderText("DESCRIPTION")).toHaveValue("A test movie");
+      expect(screen.getByPlaceholderText("DESCRIPTION")).toHaveValue(
+        "A test movie"
+      );
       expect(screen.getByLabelText("Premium:")).toBeChecked();
-      expect(screen.getByAltText("Poster Preview")).toHaveAttribute("src", "http://example.com/poster.jpg");
-      expect(screen.getByAltText("Banner Preview")).toHaveAttribute("src", "http://example.com/banner.jpg");
+      expect(screen.getByAltText("Poster Preview")).toHaveAttribute(
+        "src",
+        "http://example.com/poster.jpg"
+      );
+      expect(screen.getByAltText("Banner Preview")).toHaveAttribute(
+        "src",
+        "http://example.com/banner.jpg"
+      );
     });
   });
 
-  // Test Case 3: Handles form input changes
   test("updates form data on input change", () => {
     render(<AddMovie />);
     const titleInput = screen.getByPlaceholderText("TITLE");
@@ -97,14 +103,17 @@ describe("AddMovie Component", () => {
     expect(premiumCheckbox).toBeChecked();
   });
 
-  // Test Case 4: Handles file uploads (Fixed)
   test("handles poster and banner file uploads", () => {
     render(<AddMovie />);
     const posterInput = screen.getByLabelText("Poster") as HTMLInputElement;
     const bannerInput = screen.getByLabelText("Banner") as HTMLInputElement;
 
-    const posterFile = new File(["poster"], "poster.jpg", { type: "image/jpeg" });
-    const bannerFile = new File(["banner"], "banner.jpg", { type: "image/jpeg" });
+    const posterFile = new File(["poster"], "poster.jpg", {
+      type: "image/jpeg",
+    });
+    const bannerFile = new File(["banner"], "banner.jpg", {
+      type: "image/jpeg",
+    });
 
     fireEvent.change(posterInput, { target: { files: [posterFile] } });
     fireEvent.change(bannerInput, { target: { files: [bannerFile] } });
@@ -113,7 +122,6 @@ describe("AddMovie Component", () => {
     expect(bannerInput.files![0]).toBe(bannerFile);
   });
 
-  // Test Case 5: Submits form to add a new movie
   test("submits form to add a new movie", async () => {
     mockedAddMovie.mockResolvedValue({});
     const navigate = jest.fn();
@@ -121,27 +129,46 @@ describe("AddMovie Component", () => {
 
     render(<AddMovie />);
 
-    fireEvent.change(screen.getByPlaceholderText("TITLE"), { target: { value: "New Movie" } });
-    fireEvent.change(screen.getByPlaceholderText("GENRE"), { target: { value: "Action" } });
-    fireEvent.change(screen.getByPlaceholderText("RELEASE YEAR"), { target: { value: "2023" } });
-    fireEvent.change(screen.getByPlaceholderText("DURATION"), { target: { value: "120" } });
-    fireEvent.change(screen.getByPlaceholderText("RATING"), { target: { value: "8.5" } });
-    fireEvent.change(screen.getByPlaceholderText("DIRECTOR"), { target: { value: "John Doe" } });
-    fireEvent.change(screen.getByPlaceholderText("DESCRIPTION"), { target: { value: "A new movie" } });
+    fireEvent.change(screen.getByPlaceholderText("TITLE"), {
+      target: { value: "New Movie" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("GENRE"), {
+      target: { value: "Action" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("RELEASE YEAR"), {
+      target: { value: "2023" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("DURATION"), {
+      target: { value: "120" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("RATING"), {
+      target: { value: "8.5" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("DIRECTOR"), {
+      target: { value: "John Doe" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("DESCRIPTION"), {
+      target: { value: "A new movie" },
+    });
 
-    const posterFile = new File(["poster"], "poster.jpg", { type: "image/jpeg" });
-    fireEvent.change(screen.getByLabelText("Poster"), { target: { files: [posterFile] } });
+    const posterFile = new File(["poster"], "poster.jpg", {
+      type: "image/jpeg",
+    });
+    fireEvent.change(screen.getByLabelText("Poster"), {
+      target: { files: [posterFile] },
+    });
 
     fireEvent.click(screen.getByText("Add Movie"));
 
     await waitFor(() => {
       expect(mockedAddMovie).toHaveBeenCalledWith(expect.any(FormData));
-      expect(mockedToastSuccess).toHaveBeenCalledWith("Movie added successfully!");
+      expect(mockedToastSuccess).toHaveBeenCalledWith(
+        "Movie added successfully!"
+      );
       expect(navigate).toHaveBeenCalledWith("/dashboard");
     });
   });
 
-  // Test Case 6: Submits form to update an existing movie
   test("submits form to update an existing movie", async () => {
     mockedUseLocation.mockReturnValue({ state: { mode: "edit", id: 1 } });
     mockedGetMoviesById.mockResolvedValue({
@@ -167,30 +194,50 @@ describe("AddMovie Component", () => {
       expect(screen.getByText("🎬 Edit Movie")).toBeInTheDocument();
     });
 
-    fireEvent.change(screen.getByPlaceholderText("TITLE"), { target: { value: "Updated Movie" } });
+    fireEvent.change(screen.getByPlaceholderText("TITLE"), {
+      target: { value: "Updated Movie" },
+    });
     fireEvent.click(screen.getByText("Update Movie"));
 
     await waitFor(() => {
-      expect(mockedUpdateMovie).toHaveBeenCalledWith(1, expect.objectContaining({
-        title: "Updated Movie",
-      }));
-      expect(mockedToastSuccess).toHaveBeenCalledWith("Movie updated successfully!");
+      expect(mockedUpdateMovie).toHaveBeenCalledWith(
+        1,
+        expect.objectContaining({
+          title: "Updated Movie",
+        })
+      );
+      expect(mockedToastSuccess).toHaveBeenCalledWith(
+        "Movie updated successfully!"
+      );
       expect(navigate).toHaveBeenCalledWith("/dashboard");
     });
   });
 
-  // Test Case 7: Displays error message on form submission failure
   test("displays error message on form submission failure", async () => {
     mockedAddMovie.mockRejectedValue(new Error("Failed to add movie"));
     render(<AddMovie />);
 
-    fireEvent.change(screen.getByPlaceholderText("TITLE"), { target: { value: "New Movie" } });
-    fireEvent.change(screen.getByPlaceholderText("GENRE"), { target: { value: "Action" } });
-    fireEvent.change(screen.getByPlaceholderText("RELEASE YEAR"), { target: { value: "2023" } });
-    fireEvent.change(screen.getByPlaceholderText("DURATION"), { target: { value: "120" } });
-    fireEvent.change(screen.getByPlaceholderText("RATING"), { target: { value: "8.5" } });
-    fireEvent.change(screen.getByPlaceholderText("DIRECTOR"), { target: { value: "John Doe" } });
-    fireEvent.change(screen.getByPlaceholderText("DESCRIPTION"), { target: { value: "A new movie" } });
+    fireEvent.change(screen.getByPlaceholderText("TITLE"), {
+      target: { value: "New Movie" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("GENRE"), {
+      target: { value: "Action" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("RELEASE YEAR"), {
+      target: { value: "2023" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("DURATION"), {
+      target: { value: "120" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("RATING"), {
+      target: { value: "8.5" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("DIRECTOR"), {
+      target: { value: "John Doe" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("DESCRIPTION"), {
+      target: { value: "A new movie" },
+    });
 
     fireEvent.click(screen.getByText("Add Movie"));
 
@@ -200,7 +247,6 @@ describe("AddMovie Component", () => {
     });
   });
 
-  // Test Case 8: Ensures required fields are validated
   test("prevents form submission if required fields are empty", async () => {
     render(<AddMovie />);
     fireEvent.click(screen.getByText("Add Movie"));

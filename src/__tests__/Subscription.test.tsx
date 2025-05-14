@@ -5,7 +5,6 @@ import "@testing-library/jest-dom";
 import * as subscriptionService from "../services/Subscription";
 import { BrowserRouter as Router } from "react-router-dom";
 
-// Mock window.location.href
 delete (window as any).location;
 (window as any).location = { href: "" };
 
@@ -57,7 +56,9 @@ describe("SubscriptionPage Component", () => {
 
   test("calls createSubscription and redirects on success", async () => {
     const mockUrl = "https://mock-checkout.com";
-    (subscriptionService.createSubscription as jest.Mock).mockResolvedValueOnce(mockUrl);
+    (subscriptionService.createSubscription as jest.Mock).mockResolvedValueOnce(
+      mockUrl
+    );
 
     render(
       <Router>

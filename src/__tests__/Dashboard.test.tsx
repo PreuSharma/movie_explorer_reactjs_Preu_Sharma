@@ -1,4 +1,3 @@
-// Removed unused React import
 import { render, screen } from "@testing-library/react";
 import Dashboard from "../pages/Dashboard";
 import "@testing-library/jest-dom";
@@ -18,7 +17,9 @@ jest.mock("../components/FeaturedBanner", () => ({
 jest.mock("../components/MovieListing", () => ({
   __esModule: true,
   default: ({ search, genre }: any) => (
-    <div data-testid="movie-listing">Mock Movie Listing - {search}, {genre}</div>
+    <div data-testid="movie-listing">
+      Mock Movie Listing - {search}, {genre}
+    </div>
   ),
 }));
 
@@ -46,8 +47,11 @@ describe("Dashboard Component", () => {
   it("initial state values are passed correctly", () => {
     render(<Dashboard />);
 
-    expect(screen.getByTestId("header")).toHaveTextContent("Mock Header - Search:");
-    expect(screen.getByTestId("movie-listing")).toHaveTextContent("Mock Movie Listing - ,");
+    expect(screen.getByTestId("header")).toHaveTextContent(
+      "Mock Header - Search:"
+    );
+    expect(screen.getByTestId("movie-listing")).toHaveTextContent(
+      "Mock Movie Listing - ,"
+    );
   });
-
 });

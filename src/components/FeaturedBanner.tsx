@@ -48,7 +48,6 @@ const FeaturedBanner: React.FC<FeaturedBannerProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
 
-  // const apiUrl = 'https://movie-explorer-ror-aalekh-2ewg.onrender.com/api/v1/movies';
   const apiUrl =
     "https://movie-explorer-ror-amansharma.onrender.com/api/v1/movies";
 

@@ -15,22 +15,6 @@ const firebaseConfig = {
   messagingSenderId: "486386508395",
   appId: "1:486386508395:web:e4dec00e6a29d6ca35c72e",
   measurementId: "G-6H518PGSKJ",
-
-  // apiKey: "AIzaSyCKt2wYuYzr0uKWe8o5jUE6p9wb-3lSK68",
-  // authDomain: "movie-explorer-5bc8a.firebaseapp.com",
-  // projectId: "movie-explorer-5bc8a",
-  // storageBucket: "movie-explorer-5bc8a.firebasestorage.app",
-  // messagingSenderId: "561268525206",
-  // appId: "1:561268525206:web:9ba893c094bf72aed81ab7",
-  // measurementId: "G-XPP4G1SXPV"
-
-  // apiKey: "AIzaSyCci1XkgAyxM7Iewk1W1YwyzGeMfLCa9b0",
-  // authDomain: "movieexplorerapp-2025.firebaseapp.com",
-  // projectId: "movieexplorerapp-2025",
-  // storageBucket: "movieexplorerapp-2025.firebasestorage.app",
-  // messagingSenderId: "79088125226",
-  // appId: "1:79088125226:web:f4a1dbb7b408aeaaa14a53",
-  // measurementId: "G-RKFLEBTXBT"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -52,8 +36,6 @@ export const generateToken = async () => {
 
     const vapidKey =
       "BFm0kTDh9QoBi9OGzGTctrOsCUSCmg7uKrvxDbDh0TDrDm35H-TgvXjPmAxZqXFV4PZOFihn0JuKzpCXSTwc_cE";
-    // const vapidKey = "BB-kLe4vRvnBrHpgtnGuaVLdXTLRKbxJMmX3Ja7Tw92tW9NDKoGzQW1WXZDOII2ObL_bjPzBQvLOL9L6PnkbYxw";
-    // const vapidKey = "BNp-QAa-FM4eAUJ6gwJmIHaL8DINbddqGo44EEjFvHf9D35lSeQwMPUdoH27skZDAdUb8bFfwasb9nvC_nkzRcA";
 
     const token = await getToken(messaging, {
       vapidKey,
@@ -79,8 +61,6 @@ export const monitorToken = async () => {
   try {
     const vapidKey =
       "BFm0kTDh9QoBi9OGzGTctrOsCUSCmg7uKrvxDbDh0TDrDm35H-TgvXjPmAxZqXFV4PZOFihn0JuKzpCXSTwc_cE";
-    // const vapidKey = "BB-kLe4vRvnBrHpgtnGuaVLdXTLRKbxJMmX3Ja7Tw92tW9NDKoGzQW1WXZDOII2ObL_bjPzBQvLOL9L6PnkbYxw";
-    // const vapidKey = "BNp-QAa-FM4eAUJ6gwJmIHaL8DINbddqGo44EEjFvHf9D35lSeQwMPUdoH27skZDAdUb8bFfwasb9nvC_nkzRcA";
     const token = await getToken(messaging, { vapidKey }).catch(
       async (error) => {
         if (
