@@ -149,7 +149,7 @@ const FeaturedBanner: React.FC<FeaturedBannerProps> = ({
               ▶ Explore Now
             </motion.button>
             </span>
-            <span  onClick={() => navigate("/dashboard/subscription")}>
+            <span onClick={() => navigate("/dashboard/subscription")}>
             <motion.button
               whileHover={{ scale: 1.08 }}
               className="bg-white/10 hover:bg-white/20 px-4 sm:px-6 py-2 rounded-full text-base sm:text-lg font-semibold shadow-md backdrop-blur"

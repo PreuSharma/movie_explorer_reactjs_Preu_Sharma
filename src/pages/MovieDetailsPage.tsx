@@ -18,7 +18,7 @@ const MovieDetailsPage: React.FC = () => {
           const movie = await getMoviesById(Number(movieId));
           setMovieDetails(movie || null);
           console.log("Movie ID:", movieId);
-          window.scrollTo(0, 0); // Scroll to top on page load
+          window.scrollTo(0, 0); 
         } catch (error) {
           console.error("Error fetching movie details:", error);
           setMovieDetails(null);

@@ -83,15 +83,6 @@ export const getSubscriptionStatus = async (token: string) => {
 
 
 
-
-
-
-
-
-
-
-
-
 export const verifySubscription = async (sessionId: string, authToken: string) => {
   if (!sessionId) {
     throw new Error("No session ID found in the URL.");

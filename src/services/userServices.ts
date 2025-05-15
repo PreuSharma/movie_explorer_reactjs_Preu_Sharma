@@ -1,5 +1,5 @@
 const API_URL = "https://movie-explorer-ror-amansharma.onrender.com";
-// const API_URL='https://movie-explorer-ror-aalekh-2ewg.onrender.com';
+
 
 interface LoginPayload {
   user: {
@@ -73,6 +73,8 @@ export const logoutUser = async () => {
     throw new Error(error.message || "Something went wrong during logout.");
   }
 };
+
+
 
 export const sendTokenToBackend = async (token: string): Promise<any> => {
   try {

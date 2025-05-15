@@ -3,7 +3,6 @@ import toast from "react-hot-toast";
 
 const BASE_URL = "https://movie-explorer-ror-amansharma.onrender.com";
 
-// const BASE_URL = 'https://movie-explorer-ror-aalekh-2ewg.onrender.com';
 
 interface Movie {
   id: number;

@@ -5,7 +5,6 @@ import { Link, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import { searchMoviesByTitle } from "../services/MovieServices";
 
-
 interface SearchProps {
   search: string;
   setSearch: (value: string) => void;

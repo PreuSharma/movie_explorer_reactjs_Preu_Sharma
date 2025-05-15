@@ -85,9 +85,6 @@ const MovieCard: React.FC<MovieCardProps> = ({
       toast.error("This is a premium movie. Upgrade your plan to access.");
       return;
     }
-    else if(userRole==="supervisor"){
-    navigate(`/dashboard/movie/${id}`);
-    }
     else{
       navigate(`/dashboard/movie/${id}`);
     }
