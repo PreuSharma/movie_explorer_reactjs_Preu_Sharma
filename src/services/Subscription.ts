@@ -60,6 +60,10 @@ export const getSubscriptionStatus = async (token: string) => {
       }
     );
 
+    if (response.status ===200) {
+    console.log("Subscription Status Response:", response.data);
+    localStorage.setItem("subscriptionStatus", response.data.plan_type);
+    }
     if ("error" in response.data) {
       throw new Error(response.data.error);
     }

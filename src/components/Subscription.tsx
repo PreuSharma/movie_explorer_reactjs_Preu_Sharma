@@ -29,7 +29,7 @@ export default function Subscription() {
     {
       id: "1_day",
       name: "1 Day Pass",
-      price: "$1.99",
+      price: "£1.00",
       features: [
         "Full access to all movies",
         "Unlimited streaming",
@@ -41,7 +41,7 @@ export default function Subscription() {
     {
       id: "1_month",
       name: "1 Month Pass",
-      price: "$7.99",
+      price: "£30.00",
       features: [
         "Full access to all movies",
         "Unlimited streaming",
@@ -55,7 +55,7 @@ export default function Subscription() {
     {
       id: "3_months",
       name: "3 Month Premium",
-      price: "$19.99",
+      price: "£85.00",
       features: [
         "Full access to all movies",
         "Unlimited streaming",
@@ -230,7 +230,7 @@ export default function Subscription() {
               }}
             >
               <Typography variant="h4" component="h2" gutterBottom>
-                Confirm Your Subscription
+                Ready To Subscribe To Enjoy Premium Content ?
               </Typography>
               <Typography
                 variant="body1"

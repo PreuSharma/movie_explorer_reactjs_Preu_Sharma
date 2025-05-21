@@ -273,7 +273,6 @@ export const updateMovie = async (
     );
 
     const movie: Movie = response.data.movie;
-    toast.success("Movie updated successfully!");
     return movie;
   } catch (error: any) {
     console.error("Error updating movie:", error.message, error.response?.data);
@@ -301,7 +300,6 @@ export const deleteMovie = async (id: number): Promise<boolean> => {
     });
 
     console.log(`Movie with ID ${id} deleted successfully`);
-    toast.success("Movie deleted successfully!");
     return true;
   } catch (error: any) {
     console.error("Error deleting movie:", error.message, error.response?.data);

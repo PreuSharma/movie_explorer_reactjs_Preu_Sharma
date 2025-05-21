@@ -5,6 +5,8 @@ import {
   searchMoviesByTitle,
 } from "../services/MovieServices";
 import { useSubscription } from "../context/SubscriptionContext";
+import { useLocation } from "react-router-dom";
+
 
 interface Movie {
   id: number;
@@ -50,6 +52,9 @@ const MovieListing: React.FC<MovieListingPageProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<string>("Top Rated");
   const [allFetchedMovies, setAllFetchedMovies] = useState<Movie[]>([]);
   const { planType } = useSubscription();
+  const location = useLocation();
+  const isDetailsPage = location.pathname.startsWith("/dashboard/movie/");
+
 
   const observerRef = useRef<IntersectionObserver | null>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -138,13 +143,14 @@ const MovieListing: React.FC<MovieListingPageProps> = ({
   return (
     <div className="w-full p-4 md:p-8 lg:p-12 bg-black min-h-screen">
       {/* Category Switcher */}
+      {!isDetailsPage && (
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6 mb-6 text-white">
         {/* Category Buttons */}
         <div className="flex flex-wrap justify-center md:justify-start gap-3">
           {["Top Rated", "Latest by Year"].map((category) => (
             <button
               key={category}
-              className={`transition-all duration-300 text-sm sm:text-base md:text-lg font-semibold px-4 py-2 rounded-full ${
+              className={`transition-all duration-300 text-sm sm:text-base md:text-lg font-semibold px-4 py-2 rounded-full cursor-pointer ${
                 selectedCategory === category
                   ? "bg-white text-black shadow-md"
                   : "bg-gray-800 hover:bg-white hover:text-black"
@@ -159,7 +165,7 @@ const MovieListing: React.FC<MovieListingPageProps> = ({
         {/* Genre Dropdown */}
         <div className="flex justify-center md:justify-end">
           <select
-            className="transition-all duration-300 border border-gray-600 px-4 py-2 rounded-full bg-gray-800 text-white text-sm sm:text-base focus:outline-none hover:border-white"
+            className="transition-all duration-300 border border-gray-600 px-4 py-2 rounded-full bg-gray-800 text-white text-sm sm:text-base focus:outline-none hover:border-white cursor-pointer"
             value={genre}
             onChange={(e) => setGenre(e.target.value)}
           >
@@ -173,16 +179,17 @@ const MovieListing: React.FC<MovieListingPageProps> = ({
           </select>
         </div>
       </div>
+      )}
 
       {/* Movies Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6 cursor-pointer">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
         {movies.length === 0 && !loading && (
           <p className="text-white col-span-full text-center">
             No movies found{search ? ` for "${search}"` : ""}.
           </p>
         )}
         {movies.map((movie) => (
-          <div key={movie.id} className="flex justify-center">
+          <div key={movie.id} className="flex justify-center cursor-pointer">
             <MovieCard
               id={movie.id}
               posterUrl={movie.poster_url}
@@ -212,10 +219,10 @@ const MovieListing: React.FC<MovieListingPageProps> = ({
       {/* Continue Watching Section */}
       {!search && (
         <div className="mt-12 text-white">
-          <h2 className="text-2xl mb-4">Continue Watching</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6 cursor-pointer">
+          <h2 className="text-2xl mb-4">Trending Now</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
             {allFetchedMovies.slice(0, 3).map((movie) => (
-              <div key={movie.id} className="flex justify-center">
+              <div key={movie.id} className="flex justify-center cursor-pointer">
                 <MovieCard
                   id={movie.id}
                   posterUrl={movie.poster_url}

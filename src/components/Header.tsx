@@ -53,6 +53,7 @@ const Header: React.FC<SearchProps> = memo(({ search, setSearch }) => {
     total_count: 0,
     per_page: 10,
   });
+
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -60,8 +61,6 @@ const Header: React.FC<SearchProps> = memo(({ search, setSearch }) => {
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("userData") || "{}");
-    console.log("userData", userData);
-
     const token = localStorage.getItem("token");
     if (userData && token) {
       setUserName(userData.name);
@@ -75,10 +74,7 @@ const Header: React.FC<SearchProps> = memo(({ search, setSearch }) => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        searchRef.current &&
-        !searchRef.current.contains(event.target as Node)
-      ) {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setShowSearch(false);
         setMovieResults([]);
         setCurrentPage(1);
@@ -134,7 +130,7 @@ const Header: React.FC<SearchProps> = memo(({ search, setSearch }) => {
       }
       debounceTimeoutRef.current = setTimeout(() => {
         handleSearch(value, page);
-      }, 400);
+      }, 3000);
     },
     [handleSearch]
   );
@@ -199,6 +195,7 @@ const Header: React.FC<SearchProps> = memo(({ search, setSearch }) => {
       toast.success(`Logout Successful: ${response.message || "OK"}`);
       localStorage.removeItem("token");
       localStorage.removeItem("userData");
+      localStorage.removeItem("subscriptionStatus");
       setIsLoggedIn(false);
       window.location.href = "/";
     } catch (error: any) {
@@ -218,7 +215,8 @@ const Header: React.FC<SearchProps> = memo(({ search, setSearch }) => {
           Movie Explorer <span className="text-red-600">+</span>
         </h1>
         <button
-          className="md:hidden" aria-label="menu"
+          className="md:hidden"
+          aria-label="menu"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           {mobileMenuOpen ? (
@@ -273,12 +271,13 @@ const Header: React.FC<SearchProps> = memo(({ search, setSearch }) => {
       <div className="flex items-center space-x-4 mt-3 md:mt-0 relative">
         {/* Search Icon + Dropdown */}
         <div className="relative" ref={searchRef}>
-          <FiSearch aria-label="search"
-            className="text-xl cursor-pointer hover:text-red-600 transition" 
+          <FiSearch
+            aria-label="search"
+            className="text-xl cursor-pointer hover:text-red-600 transition"
             onClick={toggleSearch}
           />
           {showSearch && (
-            <div className="absolute top-8 right-0 sm:right-2 text-black rounded-xl shadow-lg p-4 w-96 max-w-[80vw] z-20">
+            <div className="absolute top-8 right-0 sm:right-2 text-black rounded-xl p-4 w-96 max-w-[80vw] z-20">
               <div className="relative">
                 <input
                   ref={inputRef}
@@ -289,7 +288,10 @@ const Header: React.FC<SearchProps> = memo(({ search, setSearch }) => {
                   onChange={handleSearchInputChange}
                   className="w-full pl-10 pr-10 py-3 rounded-full border border-gray-300 bg-white text-black placeholder-gray-500 focus:outline-none"
                 />
-                <FiSearch aria-label="search" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                <FiSearch
+                  aria-label="search"
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                />
                 {search && (
                   <button
                     onClick={clearSearch}
@@ -347,29 +349,6 @@ const Header: React.FC<SearchProps> = memo(({ search, setSearch }) => {
                   ))}
               </div>
               {/* Pagination */}
-              {!isSearching &&
-                movieResults.length > 0 &&
-                pagination.total_pages > 1 && (
-                  <div className="mt-4 flex justify-between items-center text-sm">
-                    <button
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="px-2 py-1 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
-                    >
-                      Previous
-                    </button>
-                    <span>
-                      Page {pagination.current_page} of {pagination.total_pages}
-                    </span>
-                    <button
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === pagination.total_pages}
-                      className="px-2 py-1 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
-                    >
-                      Next
-                    </button>
-                  </div>
-                )}
             </div>
           )}
         </div>
@@ -388,19 +367,22 @@ const Header: React.FC<SearchProps> = memo(({ search, setSearch }) => {
               />
             </div>
             {showDropdown && (
-              <div className="absolute top-12 right-0 sm:right-2 bg-white text-black rounded-xl shadow-lg p-4 w-64 max-w-[90vw] z-20">
-                <p className="font-semibold text-base sm:text-lg mb-1">
+              <div className="absolute top-12 right-0 sm:right-2 bg-white text-black rounded-2xl shadow-xl p-6 w-72 max-w-[95vw] z-20">
+                <p className="font-semibold text-lg sm:text-xl mb-2">
                   Welcome, {userName}
                 </p>
-                <p className="text-sm text-gray-700 break-words">
+                <p className="text-sm text-gray-700 break-words mb-1">
                   Email: {userEmail}
                 </p>
-                <p className="text-sm text-gray-700 mb-4 break-words">
+                <p className="text-sm text-gray-700 mb-1 break-words">
                   Role: {userRole}
+                </p>
+                <p className="text-sm text-gray-700 mb-4 break-words">
+                  Subscription: {localStorage.getItem("subscriptionStatus") || "Free"}
                 </p>
                 <button
                   onClick={handleLogout}
-                  className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition"
+                  className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition font-medium cursor-pointer"
                 >
                   Logout
                 </button>
@@ -419,7 +401,10 @@ const Header: React.FC<SearchProps> = memo(({ search, setSearch }) => {
 
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
-        <nav className="w-full mt-4 flex flex-col space-y-2 text-sm md:hidden transition-all bg-black px-4 pb-4" data-testid="mobile-nav">
+        <nav
+          className="w-full mt-4 flex flex-col space-y-2 text-sm md:hidden transition-all bg-black px-4 pb-4"
+          data-testid="mobile-nav"
+        >
           {(() => {
             return [
               { name: "Home", path: "/dashboard" },

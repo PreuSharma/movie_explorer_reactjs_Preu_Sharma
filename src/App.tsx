@@ -14,11 +14,13 @@ const App: React.FC = () => {
   }, []);
 
   return (
+    <div className="bg-black min-h-screen text-white">
     <BrowserRouter>
       <Toaster
         position="top-right"
         reverseOrder={false}
         toastOptions={{
+          duration: 2000,
           style: {
             background: "#1f2937",
             color: "#f9fafb",
@@ -46,6 +48,7 @@ const App: React.FC = () => {
 
       <RoutingModule />
     </BrowserRouter>
+    </div>
   );
 };
 

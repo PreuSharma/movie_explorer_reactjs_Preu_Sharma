@@ -8,7 +8,7 @@ interface SubscriptionContextType {
   refreshStatus: () => void;
 }
 
-const SubscriptionContext = createContext<SubscriptionContextType>({
+export const SubscriptionContext = createContext<SubscriptionContextType>({
   planType: null,
   loading: false,
   refreshStatus: () => {},

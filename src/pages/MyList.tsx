@@ -45,7 +45,7 @@ const MyList: React.FC = () => {
           <h1 className="text-2xl font-bold text-center mb-4 text-white"></h1>
 
           {/* Movie Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 z-20">
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-6 z-20">
             {movieList.length === 0 ? (
               <p className="text-center text-lg text-gray-500">
                 No movies added yet.
@@ -54,23 +54,26 @@ const MyList: React.FC = () => {
               movieList.map((movie, index) => (
                 <div
                   key={movie.id}
-                  className="relative rounded-lg overflow-hidden shadow-lg bg-zinc-800 text-white hover:scale-105 transition-transform duration-300 transform hover:rotate-3 animate-fly-in"
+                  className="relative rounded-lg overflow-hidden shadow-lg bg-zinc-800 text-white hover:scale-105 transition-transform duration-300 transform hover:rotate-3 animate-fly-in cursor-pointer"
                   style={{
-                    animationDelay: `${index * 100}ms`,
+                    animationDelay: `${index * 100}ms`
                   }}
                 >
                   <img
                     src={movie.posterUrl}
                     alt={movie.title}
                     className="w-full h-40 object-cover rounded-t-lg lg:h-80"
+                    onClick={() => {
+                    window.location.href = `/dashboard/movie/${movie.id}`;
+                  }}
                   />
                   <div className="p-3 text-center">
-                    <h2 className="text-sm font-semibold">{movie.title}</h2>
+                    <h2 className="text-sm font-semibold" >{movie.title}</h2>
 
                     {/* Delete Button */}
                     <button
                       onClick={() => handleDelete(movie.id)}
-                      className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 text-xs rounded hover:bg-white hover:text-gray-800"
+                      className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 text-xs rounded hover:bg-white hover:text-gray-800 cursor-pointer transition duration-300"
                     >
                       Delete
                     </button>

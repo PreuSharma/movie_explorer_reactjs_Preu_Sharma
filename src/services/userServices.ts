@@ -23,7 +23,13 @@ export const signUpUser = async (user: {
 
     const data = await response.json();
     if (!response.ok) {
-      throw new Error(data.message || "Signup failed. Please try again.");
+      // throw new Error(data.message || "Signup failed. Please try again.");
+      const errorMessage =
+    Array.isArray(data.errors) && data.errors.length > 0
+      ? data.errors.join(", ")
+      : data.message || "Signup failed. Please try again.";
+  throw new Error(errorMessage);
+      
     }
 
     return data;
@@ -43,6 +49,8 @@ export const loginUser = async (payload: LoginPayload) => {
     });
 
     const data = await response.json();
+    console.log("Login response data:", data);
+    
     return { data, status: response.status };
   } catch (error) {
     console.error("Login API error:", error);

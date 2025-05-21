@@ -54,6 +54,7 @@ const Success = () => {
       }}
     >
       <Header search={search} setSearch={setSearch} />
+      
       <Box
         sx={{
           flex: 1,
@@ -62,7 +63,9 @@ const Success = () => {
           alignItems: "center",
           justifyContent: "center",
           p: 3,
+          
         }}
+        
       >
         <Container maxWidth="sm">
           <Paper
@@ -101,7 +104,7 @@ const Success = () => {
                   variant="contained"
                   color="primary"
                   size="large"
-                  onClick={() => (window.location.href = "/user/subscription")}
+                  onClick={() => (window.location.href = "/dashboard/subscription")}
                   sx={{
                     bgcolor: "#E50914",
                     "&:hover": { bgcolor: "#c7000d" },

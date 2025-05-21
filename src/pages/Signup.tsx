@@ -3,6 +3,7 @@ import { signUpUser } from "../services/userServices";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { withNavigation } from "../utils/withNavigation";
+import { FaSpinner } from "react-icons/fa";
 
 interface SignupState {
   fullName: string;
@@ -12,6 +13,7 @@ interface SignupState {
   mobile_number: string;
   isAgreed: boolean;
   error: string;
+  isLoading: boolean;
 }
 
 interface SignupProps {
@@ -29,6 +31,7 @@ class Signup extends Component<SignupProps, SignupState> {
       mobile_number: "",
       isAgreed: false,
       error: "",
+      isLoading: false,
     };
   }
 
@@ -37,9 +40,10 @@ class Signup extends Component<SignupProps, SignupState> {
   ) => {
     const { name, value } = e.target;
     this.setState((prevState) => ({
-  ...prevState,
-  [name]: name === "isAgreed" ? (e.target as HTMLInputElement).checked : value,
-}));
+      ...prevState,
+      [name]:
+        name === "isAgreed" ? (e.target as HTMLInputElement).checked : value,
+    }));
   };
 
   handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,15 +105,18 @@ class Signup extends Component<SignupProps, SignupState> {
     };
 
     try {
+      this.setState({ isLoading: true });
       const data = await signUpUser(user);
       localStorage.setItem("token", data.token);
-      toast.success("Account created successfully!");
+      toast.success(data.message || "Account created successfully!");
       this.props.navigate("/login");
     } catch (error: any) {
-      toast.error("Signup failed. Please try again.");
+      toast.error(error.message || "Signup failed. Please try again.");
       this.setState({
         error: error.message ?? "Something went wrong. Please try again.",
       });
+    } finally {
+      this.setState({ isLoading: false });
     }
   };
 
@@ -159,7 +166,7 @@ class Signup extends Component<SignupProps, SignupState> {
               onChange={this.handleInputChange}
               placeholder="Full Name"
               required
-              className="w-full p-2 mb-3 rounded bg-white focus:outline-none focus:ring-2 focus:ring-red-400"
+              className="w-full p-2 mb-3 rounded bg-white text-black focus:outline-none focus:ring-2 focus:ring-red-400"
             />
 
             <input
@@ -169,7 +176,7 @@ class Signup extends Component<SignupProps, SignupState> {
               onChange={this.handleInputChange}
               placeholder="Email"
               required
-              className="w-full p-2 mb-3 rounded bg-white focus:outline-none focus:ring-2 focus:ring-red-400"
+              className="w-full p-2 mb-3 rounded bg-white text-black focus:outline-none focus:ring-2 focus:ring-red-400"
             />
 
             <input
@@ -179,7 +186,7 @@ class Signup extends Component<SignupProps, SignupState> {
               onChange={this.handleInputChange}
               placeholder="Mobile Number"
               required
-              className="w-full p-2 mb-3 rounded bg-white focus:outline-none focus:ring-2 focus:ring-red-400"
+              className="w-full p-2 mb-3 rounded bg-white text-black focus:outline-none focus:ring-2 focus:ring-red-400"
             />
 
             <input
@@ -189,7 +196,7 @@ class Signup extends Component<SignupProps, SignupState> {
               onChange={this.handleInputChange}
               placeholder="Password"
               required
-              className="w-full p-2 mb-3 rounded bg-white focus:outline-none focus:ring-2 focus:ring-red-400"
+              className="w-full p-2 mb-3 rounded bg-white text-black focus:outline-none focus:ring-2 focus:ring-red-400"
             />
 
             <input
@@ -199,7 +206,7 @@ class Signup extends Component<SignupProps, SignupState> {
               onChange={this.handleInputChange}
               placeholder="Confirm Password"
               required
-              className="w-full p-2 mb-3 rounded bg-white focus:outline-none focus:ring-2 focus:ring-red-400"
+              className="w-full p-2 mb-3 rounded bg-white text-black focus:outline-none focus:ring-2 focus:ring-red-400"
             />
 
             <label className="text-gray-300 text-sm flex items-center mb-4 cursor-pointer">
@@ -207,16 +214,24 @@ class Signup extends Component<SignupProps, SignupState> {
                 type="checkbox"
                 checked={isAgreed}
                 onChange={this.handleCheckboxChange}
-                className="mr-2 cursor-pointer" 
-                />
+                className="mr-2 cursor-pointer"
+              />
               I agree to the Terms and Conditions
             </label>
 
             <button
               type="submit"
-              className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded transition duration-200 cursor-pointer"
+              disabled={this.state.isLoading}
+              className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded transition duration-200 cursor-pointer flex items-center justify-center gap-2"
             >
-              Create Account
+              {this.state.isLoading ? (
+                <>
+                  <FaSpinner className="animate-spin" />
+                  Creating Account...
+                </>
+              ) : (
+                "Create Account"
+              )}
             </button>
 
             <div className="flex items-center justify-center my-4">

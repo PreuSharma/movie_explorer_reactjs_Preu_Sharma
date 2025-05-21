@@ -31,10 +31,12 @@ const AddMovie: React.FC = () => {
   const [message, setMessage] = useState("");
   const [movieId, setMovieId] = useState<number | null>(null);
   const [search, setSearch] = React.useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchMovieData = async () => {
       if (location.state?.mode === "edit" && location.state.id) {
+        setLoading(true);
         const movie = await getMoviesById(location.state.id);
         if (movie) {
           setFormData({
@@ -46,12 +48,13 @@ const AddMovie: React.FC = () => {
             premium: movie.premium || false,
             rating: movie.rating?.toString() || "",
             director: movie.director || "",
-          
+
             posterUrl: movie.poster_url || "",
             bannerUrl: movie.banner_url || "",
           });
           setMovieId(movie.id);
         }
+        setLoading(false);
       }
     };
 
@@ -82,6 +85,7 @@ const AddMovie: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+      setLoading(true);
 
     try {
       if (movieId) {
@@ -111,12 +115,27 @@ const AddMovie: React.FC = () => {
       setMessage(msg);
       toast.error(msg);
     }
+    finally {
+    setLoading(false);
+  }
   };
+
+  if (loading) {
+  return (
+    <div className="min-h-screen flex justify-center items-center bg-black text-white">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-red-600"></div>
+    </div>
+  );
+}
+
 
   return (
     <div>
       <Header search={search} setSearch={setSearch} />
-      <div className="relative min-h-screen bg-black flex items-center justify-center px-4">
+
+      <div className="relative min-h-screen bg-black flex items-center justify-center px-4 py-4">
+        <div
+          className="absolute inset-0 z-0"></div>
         <div className="relative z-10 w-full max-w-xl bg-gray-900 text-white rounded-lg shadow-2xl p-8 space-y-6 backdrop-blur-md bg-opacity-80">
           <h2 className="text-3xl font-bold text-center text-red-700 animate-pulse">
             🎬 {movieId ? "Edit Movie" : "Add Movie"}
@@ -125,16 +144,9 @@ const AddMovie: React.FC = () => {
           {message && (
             <p className="text-center text-sm text-green-400">{message}</p>
           )}
-
           <form onSubmit={handleSubmit} className="space-y-4">
-            {[
-              "title",
-              "genre",
-              "release_year",
-              "duration",
-              "rating",
-              "director",
-            ].map((field) => (
+            {/* Text Inputs */}
+            {["title", "release_year", "duration", "director"].map((field) => (
               <input
                 key={field}
                 type="text"
@@ -147,6 +159,41 @@ const AddMovie: React.FC = () => {
               />
             ))}
 
+            {/* Genre Dropdown */}
+            <select
+              name="genre"
+              value={formData.genre}
+              onChange={handleChange}
+              required
+              className="w-full p-3 bg-black bg-opacity-50 border border-cyan-600 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 cursor-pointer"
+            >
+              <option value="">Select Genre</option>
+              {["Action", "Drama", "Romance", "horrror", "Sci-Fi", "Crime"].map(
+                (genre) => (
+                  <option key={genre} value={genre}>
+                    {genre}
+                  </option>
+                )
+              )}
+            </select>
+
+            {/* Rating Dropdown */}
+            <select
+              name="rating"
+              value={formData.rating}
+              onChange={handleChange}
+              required
+              className="w-full p-3 bg-black bg-opacity-50 border border-cyan-600 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 cursor-pointer"
+            >
+              <option value="">Select Rating</option>
+              {Array.from({ length: 11 }, (_, i) => (
+                <option key={i} value={i}>
+                  {i}
+                </option>
+              ))}
+            </select>
+
+            {/* Description */}
             <textarea
               name="description"
               placeholder="DESCRIPTION"
@@ -157,10 +204,13 @@ const AddMovie: React.FC = () => {
               className="w-full p-3 bg-black bg-opacity-50 border border-cyan-600 text-white rounded-md placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
             />
 
-            <div className="flex items-center space-x-3">
-              <label className="text-sm" htmlFor="premium">Premium:</label>
+            {/* Premium Checkbox */}
+            <div className="flex items-center space-x-3 cursor-pointer">
+              <label className="text-sm" htmlFor="premium">
+                Premium:
+              </label>
               <input
-              id="premium"
+                id="premium"
                 type="checkbox"
                 name="premium"
                 checked={formData.premium}
@@ -170,7 +220,7 @@ const AddMovie: React.FC = () => {
             </div>
 
             {/* File Uploads */}
-            <div className="space-y-2">
+            <div className="space-y-2 cursor-pointer">
               <label htmlFor="poster">Poster</label>
               <input
                 id="poster"
@@ -206,9 +256,10 @@ const AddMovie: React.FC = () => {
               )}
             </div>
 
+            {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-red-600 hover:bg-red-700 transition text-white py-3 rounded-md font-semibold"
+              className="w-full bg-red-600 hover:bg-red-700 transition text-white py-3 rounded-md font-semibold cursor-pointer"
             >
               {movieId ? "Update Movie" : "Add Movie"}
             </button>

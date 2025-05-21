@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { FiEdit, FiTrash2, FiLock } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { deleteMovie } from "../services/MovieServices";
+import { FaCrown } from "react-icons/fa";
+
 
 interface MovieCardProps {
   id: number;
@@ -83,6 +85,8 @@ const MovieCard: React.FC<MovieCardProps> = ({
   const handleCardClick = () => {
     if (isLocked) {
       toast.error("This is a premium movie. Upgrade your plan to access.");
+      navigate("/dashboard/subscription");
+      window.scrollTo(0,0);
       return;
     }
     else{
@@ -103,6 +107,14 @@ const MovieCard: React.FC<MovieCardProps> = ({
           <FiLock size={20} className="text-red" />
         </div>
       )}
+
+      {premium && (
+  <div className="absolute top-50 left-4 z-20 bg-yellow-400 text-black px-2 py-1 text-xs font-bold rounded flex items-center gap-1">
+    <FaCrown className="text-yellow-800" size={12} />
+    
+  </div>
+)}
+
 
       {/* Add to List Button */}
       <button
@@ -142,14 +154,14 @@ const MovieCard: React.FC<MovieCardProps> = ({
           <button
             aria-label="Edit"
             onClick={handleEdit}
-            className="bg-gray-800 text-white px-2 py-1 text-xs rounded hover:bg-white hover:text-gray-800"
+            className="bg-gray-800 text-white px-2 py-1 text-xs rounded hover:bg-white hover:text-gray-800 cursor-pointer"
           >
             <FiEdit />
           </button>
           <button
             aria-label="Delete"
             onClick={handleDelete}
-            className="bg-gray-800 text-white px-2 py-1 text-xs rounded hover:bg-white hover:text-gray-800"
+            className="bg-gray-800 text-white px-2 py-1 text-xs rounded hover:bg-white hover:text-gray-800 cursor-pointer"
           >
             <FiTrash2 />
           </button>

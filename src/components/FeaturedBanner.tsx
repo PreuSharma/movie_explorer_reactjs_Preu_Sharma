@@ -88,7 +88,7 @@ const FeaturedBanner: React.FC<FeaturedBannerProps> = ({
   if (!banners.length || !banners[currentIndex]) {
     return (
       <section className="h-[650px] w-full bg-black text-white flex items-center justify-center">
-        <p className="text-xl animate-pulse">Loading banners...</p>
+        <p className="text-xl animate-pulse">Loading...</p>
       </section>
     );
   }
@@ -144,7 +144,7 @@ const FeaturedBanner: React.FC<FeaturedBannerProps> = ({
             <span  onClick={() => navigate("/dashboard/movies")}>
             <motion.button
               whileHover={{ scale: 1.08 }}
-              className="backdrop-blur-md bg-red-600/80 hover:bg-red-700 px-4 sm:px-6 py-2 rounded-full text-base sm:text-lg font-semibold shadow-xl"
+              className="backdrop-blur-md bg-red-600/80 hover:bg-red-700 px-4 sm:px-6 py-2 rounded-full text-base sm:text-lg font-semibold shadow-xl cursor-pointer"
             >
               ▶ Explore Now
             </motion.button>
@@ -152,7 +152,7 @@ const FeaturedBanner: React.FC<FeaturedBannerProps> = ({
             <span onClick={() => navigate("/dashboard/subscription")}>
             <motion.button
               whileHover={{ scale: 1.08 }}
-              className="bg-white/10 hover:bg-white/20 px-4 sm:px-6 py-2 rounded-full text-base sm:text-lg font-semibold shadow-md backdrop-blur"
+              className="bg-white/10 hover:bg-white/20 px-4 sm:px-6 py-2 rounded-full text-base sm:text-lg font-semibold shadow-md backdrop-blur cursor-pointer"
             >
               Subscribe To MovieExplorer
             </motion.button>

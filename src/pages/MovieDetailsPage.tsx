@@ -8,11 +8,13 @@ import MovieListingPage from "../components/MovieListing";
 const MovieDetailsPage: React.FC = () => {
   const { movieId } = useParams<{ movieId: string }>();
   const [movieDetails, setMovieDetails] = useState<any | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
   const [search, setSearch] = useState<string>("");
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
+       setLoading(true);
       if (movieId) {
         try {
           const movie = await getMoviesById(Number(movieId));
@@ -23,14 +25,26 @@ const MovieDetailsPage: React.FC = () => {
           console.error("Error fetching movie details:", error);
           setMovieDetails(null);
         }
+        finally {
+          setLoading(false);
+        }
       }
     };
 
     fetchMovieDetails();
   }, [movieId]);
 
+   if (loading) {
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
+}
+
+
   if (!movieDetails) {
-    return <p className="text-white text-center mt-10">🎬 Movie not found</p>;
+    return <p className="text-white text-center">🎬 Movie not found</p>;
   }
 
 
@@ -86,7 +100,7 @@ const MovieDetailsPage: React.FC = () => {
             </div>
 
             <div className="flex flex-wrap gap-4">
-              <button className="bg-red-700 hover:bg-red-800 px-6 py-2 rounded-full text-white font-semibold shadow-md flex items-center gap-2 transition duration-300"
+              <button className="bg-red-700 hover:bg-red-800 px-6 py-2 rounded-full text-white font-semibold shadow-md flex items-center gap-2 transition duration-300 cursor-pointer"
               onClick={() => {navigate(`/dashboard/my-list`)
                 window.scrollTo(0, 0);
               }}>
